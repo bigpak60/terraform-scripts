@@ -8,9 +8,9 @@ terraform {
 }
 
 provider "aws" {
-  region     = "AWS_REGION"
-  access_key = "AWS_ACCESS_KEY"
-  secret_key = "AWS_SECRET_KEY"
+  region     = "us-east-1"
+  access_key = "AKIAXYKJQ2PVWXDSJX6K"
+  secret_key = "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"
 }
 
 // To Generate Private Key
@@ -20,7 +20,7 @@ resource "tls_private_key" "rsa_4096" {
 }
 
 variable "key_name" {
-  description = "Name of the SSH key pair"
+  description = "ec2-kmp"
 }
 
 // Create Key Pair for Connecting EC2 via SSH
@@ -36,8 +36,8 @@ resource "local_file" "private_key" {
 }
 
 # Create a security group
-resource "aws_security_group" "sg_ec2" {
-  name        = "sg_ec2"
+resource "aws_security_group" "sg_kmp" {
+  name        = "sg_kmp"
   description = "Security group for EC2"
 
   ingress {
@@ -55,18 +55,18 @@ resource "aws_security_group" "sg_ec2" {
   }
 }
 
-resource "aws_instance" "public_instance" {
-  ami                    = "ami-0f5ee92e2d63afc18"
+resource "aws_instance" "parksec2" {
+  ami                    = "ami-0fc522222ab74a244"
   instance_type          = "t2.micro"
   key_name               = aws_key_pair.key_pair.key_name
-  vpc_security_group_ids = [aws_security_group.sg_ec2.id]
+  vpc_security_group_ids = [aws_security_group.sg_kmp.id]
 
   tags = {
-    Name = "public_instance"
+    Name = "parksec2"
   }
 
   root_block_device {
-    volume_size = 30
+    volume_size = 44 
     volume_type = "gp2"
   }
 }
